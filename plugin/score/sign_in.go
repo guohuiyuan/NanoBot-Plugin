@@ -62,7 +62,7 @@ func init() {
 		}
 		sdb = initialize(engine.DataFolder() + "score.db")
 	}()
-	engine.OnMessageRegex("签到").Limit(ctxext.LimitByUser).SetBlock(true).Handle(func(ctx *nano.Ctx) {
+	engine.OnMessageFullMatch("签到").Limit(ctxext.LimitByUser).SetBlock(true).Handle(func(ctx *nano.Ctx) {
 		uid := ctx.Message.Author.ID
 		if uid == "" {
 			_, _ = ctx.SendPlainMessage(false, "ERROR: 未获取到用户uid")
@@ -152,7 +152,7 @@ func init() {
 				_, _ = ctx.SendPlainMessage(false, "ERROR: ", err)
 				return
 			}
-			_, err = ctx.SendImage("base64://"+nano.BytesToString(data), false)
+			_, err = ctx.SendImageBytes(data, false)
 			if err != nil {
 				_, _ = ctx.SendPlainMessage(false, "ERROR: ", err)
 			}
@@ -170,7 +170,7 @@ func init() {
 		}
 	})
 
-	engine.OnMessageFullMatch("获得签到背景", nano.OnlyPublic).Limit(ctxext.LimitByGroup).SetBlock(true).
+	engine.OnMessageFullMatch("获得签到背景", nano.OnlyChannel).Limit(ctxext.LimitByGroup).SetBlock(true).
 		Handle(func(ctx *nano.Ctx) {
 			uidStr := ctx.Message.Author.ID
 			picFile := cachePath + uidStr + time.Now().Format("20060102") + ".png"
@@ -185,7 +185,7 @@ func init() {
 				_, _ = ctx.SendPlainMessage(false, "ERROR: ", err)
 			}
 		})
-	engine.OnMessageFullMatch("查看等级排名", nano.OnlyPublic).Limit(ctxext.LimitByGroup).SetBlock(true).
+	engine.OnMessageFullMatch("查看等级排名", nano.OnlyChannel).Limit(ctxext.LimitByGroup).SetBlock(true).
 		Handle(func(ctx *nano.Ctx) {
 			today := time.Now().Format("20060102")
 			drawedFile := cachePath + today + "scoreRank.png"
